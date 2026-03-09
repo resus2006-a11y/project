@@ -8,7 +8,7 @@
 #define PORT 9000
  
 int main(int argc, char* argv[]) {
-
+    char buffer[1024];
     const char* serverIp = (argc > 1) ? argv[1] : "127.0.0.1";
  
     int sockFd = socket(AF_INET, SOCK_STREAM, 0);
@@ -38,19 +38,15 @@ int main(int argc, char* argv[]) {
  
     std::cout << "[Client] Connected to " << serverIp << ":" << PORT << std::endl;
  
-    const char* message = "Hello from client!";
- 
-    ssize_t bytesSent = send(sockFd, message, strlen(message), 0);
-    if (bytesSent == -1) {
-        std::cerr << "Send failed: " << strerror(errno) << std::endl;
-        close(sockFd);
-        return errno;
+       while (true) {
+        std::cout << "You: ";
+        std::cin.getline(buffer, sizeof(buffer));
+        send(sockFd, buffer, strlen(buffer), 0);
+
+        memset(buffer, 0, sizeof(buffer));
+        recv(sockFd, buffer, sizeof(buffer), 0);
+        std::cout << "Server: " << buffer << std::endl;
     }
- 
-    std::cout << "[Client] Sent " << bytesSent << " bytes: " << message << std::endl;
- 
-    close(sockFd);
-    std::cout << "[Client] Done." << std::endl;
  
     return 0;
 }

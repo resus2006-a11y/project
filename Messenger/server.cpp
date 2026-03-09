@@ -65,20 +65,16 @@ int main() {
  
         char buffer[BUFFER_SIZE];
         memset(buffer, 0, sizeof(buffer));
-        ssize_t bytesRead = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
- 
-        if (bytesRead > 0) {
-            std::cout << "[Server] Received (" << bytesRead << " bytes): " << buffer << std::endl;
-        } else if (bytesRead == 0) {            std::cout << "[Server] Client disconnected without sending data." << std::endl;
-        } else {
-            std::cerr << "[Server] Recv failed: " << strerror(errno) << std::endl;
-        }
- 
-        close(clientFd);
-        std::cout << "[Server] Connection closed." << std::endl;
-    }
+        
+        memset(buffer, 0, sizeof(buffer));
+        recv(clientFd, buffer, sizeof(buffer), 0);
+        std::cout << "Client: " << buffer << std::endl;
 
-    close(serverFd);
- 
-    return 0;
+        std::cout << "You: ";
+        std::cin.getline(buffer, sizeof(buffer));
+        send(clientFd, buffer, strlen(buffer), 0);
+    	}
+
+    	close(serverFd); 
+    	return 0;
 }
